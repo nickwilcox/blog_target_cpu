@@ -1,7 +1,7 @@
+use blog_target_cpu::*;
 use criterion::{criterion_group, criterion_main, Criterion};
 use rand::distributions::Standard;
 use rand::prelude::*;
-use blog_target_cpu::*;
 use std::default::Default;
 
 fn prepare_data(width: usize, height: usize) -> (Vec<u8>, Vec<RGBA32>, Vec<RGBA32>) {
@@ -11,7 +11,7 @@ fn prepare_data(width: usize, height: usize) -> (Vec<u8>, Vec<RGBA32>, Vec<RGBA3
         let mut i = 0u8;
         p.resize_with(256, || {
             let x = u32::from_le_bytes([i, i, i, 255]);
-            i += 1;
+            i = i.wrapping_add(1);
             x
         });
         p
@@ -27,6 +27,10 @@ fn index_to_rgba_benchmarks(c: &mut Criterion) {
     let (input, palette, mut output) = prepare_data(width, height);
     c.bench_function("indexed_to_rgba32", move |b| {
         b.iter(|| indexed_to_rgba32(&input, &palette, &mut output))
+    });
+    let (input, palette, mut output) = prepare_data(width, height);
+    c.bench_function("indexed_to_rgba32 manual", move |b| {
+        b.iter(|| unsafe { indexed_to_rgba32_avx2(&input, &palette, &mut output) })
     });
 }
 
