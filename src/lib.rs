@@ -10,6 +10,11 @@ pub fn indexed_to_rgba32(input: &[u8], palette: &[RGBA32], output: &mut [RGBA32]
 pub unsafe fn indexed_to_rgba32_avx2(input: &[u8], palette: &[RGBA32], output: &mut [RGBA32]) {
     use std::arch::x86_64::*;
     let palette = &palette[0..256];
+
+    assert!(input.len() % 8 == 0);
+    assert!(output.len() % 8 == 0);
+    assert!(output.len() >= input.len());
+
     for (output_chunk, index_chunk) in output.chunks_exact_mut(8).zip(input.chunks_exact(8)) {
         let index_u8 = _mm_loadu_si128(index_chunk.as_ptr() as *const __m128i);
         let index_u32 = _mm256_cvtepu8_epi32(index_u8);

@@ -29,7 +29,7 @@ fn index_to_rgba_benchmarks(c: &mut Criterion) {
         b.iter(|| indexed_to_rgba32(&input, &palette, &mut output))
     });
     let (input, palette, mut output) = prepare_data(width, height);
-    c.bench_function("indexed_to_rgba32 manual", move |b| {
+    c.bench_function("indexed_to_rgba32 intrinsics", move |b| {
         b.iter(|| unsafe { indexed_to_rgba32_avx2(&input, &palette, &mut output) })
     });
 }

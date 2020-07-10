@@ -1,2 +1,3 @@
 [build]
-rustflags = ["-C", "target-feature=+avx2"] 
+#rustflags = ["-C", "target-cpu=skylake"] 
+#rustflags = ["-C", "target-features=+avx2"] 
